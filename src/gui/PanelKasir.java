@@ -83,15 +83,15 @@ public class PanelKasir extends JPanel {
     }
 
     private JPanel panelBarang() {
-        MainFrame.warnaTombol(btnTambah, 0x4CAF50);
+        Tema.warnaTombol(btnTambah, 0x4CAF50);
         txtQty.setPreferredSize(new Dimension(60, 25));
         txtQty.setHorizontalAlignment(JTextField.CENTER);
         txtQty.setText("1");
 
         tblBarang.setRowHeight(24);
         tblBarang.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        MainFrame.urutRupiah(tblBarang, 2);
-        MainFrame.urutAngka(tblBarang, 3);
+        Tema.urutRupiah(tblBarang, 2);
+        Tema.urutAngka(tblBarang, 3);
         tblBarang.getTableHeader().setReorderingAllowed(false);
         DefaultTableCellRenderer kanan = new DefaultTableCellRenderer();
         kanan.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -113,9 +113,9 @@ public class PanelKasir extends JPanel {
     }
 
     private JPanel panelKeranjang() {
-        MainFrame.warnaTombol(btnHapus, 0xF44336);
-        MainFrame.warnaTombol(btnReset, 0x2196F3);
-        MainFrame.warnaTombol(btnBayar, 0x4CAF50);
+        Tema.warnaTombol(btnHapus, 0xF44336);
+        Tema.warnaTombol(btnReset, 0x2196F3);
+        Tema.warnaTombol(btnBayar, 0x4CAF50);
 
         tblKeranjang.setRowHeight(24);
         tblKeranjang.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -171,8 +171,10 @@ public class PanelKasir extends JPanel {
     }
 
     public void refreshTabel() {
-        tblBarang.clearSelection();
+        // model dikosongkan dulu baru selection, kalau dibalik RowSorter akan
+        // komplain indeks baris yang dipilih sudah tidak ada
         modelBarang.setRowCount(0);
+        tblBarang.clearSelection();
         for (Barang brg : gudang.getDaftar(txtCari.getText())) {
             modelBarang.addRow(new Object[]{brg.getKode(), brg.getNama(), Fmt.angka(brg.getHarga()), brg.getStok()});
         }
@@ -191,7 +193,9 @@ public class PanelKasir extends JPanel {
 
     private void aksiTambahKeranjang() {
         int barisTampilan = tblBarang.getSelectedRow();
-        if (barisTampilan < 0) {
+        // cek jumlah baris tampilan dulu, selection bisa tertinggal kalau tabel
+        // di-refresh tepat saat baris sedang dipilih
+        if (barisTampilan < 0 || barisTampilan >= tblBarang.getRowCount()) {
             pesan("Pilih barang di tabel dulu.");
             return;
         }

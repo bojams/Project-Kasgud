@@ -56,7 +56,7 @@ public class PanelLaporan extends JPanel {
     }
 
     private JPanel panelRingkasan() {
-        MainFrame.warnaTombol(btnRefresh, 0x2196F3);
+        Tema.warnaTombol(btnRefresh, 0x2196F3);
         lblPendapatan.setFont(lblPendapatan.getFont().deriveFont(Font.BOLD, 18f));
         lblPendapatan.setBorder(BorderFactory.createEmptyBorder(10, 0, 4, 0));
 
@@ -69,8 +69,8 @@ public class PanelLaporan extends JPanel {
 
     private JPanel panelTransaksi() {
         tblTrx.setRowHeight(22);
-        MainFrame.urutAngka(tblTrx, 0);
-        MainFrame.urutRupiah(tblTrx, 4);
+        Tema.urutAngka(tblTrx, 0);
+        Tema.urutRupiah(tblTrx, 4);
         tblTrx.getTableHeader().setReorderingAllowed(false);
         setKolomKanan(tblTrx, 4);
 
@@ -98,8 +98,10 @@ public class PanelLaporan extends JPanel {
     }
 
     public void refreshData() {
-        tblTrx.clearSelection();
+        // model dikosongkan dulu baru selection, kalau dibalik RowSorter akan
+        // komplain indeks baris yang dipilih sudah tidak ada
         modelTrx.setRowCount(0);
+        tblTrx.clearSelection();
         int no = 1;
         for (Transaksi trx : kasir.getDaftarTransaksi()) {
             modelTrx.addRow(new Object[]{no++, trx.getIdTrx(), Fmt.tanggal(trx.getTanggal()),

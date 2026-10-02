@@ -36,13 +36,17 @@ public class KasirService {
         }
 
         int idx = cariIndexKeranjang(brg.getKode());
-        int totalQty = (idx >= 0 ? keranjangQty.get(idx) : 0) + qty;
+        // pakai long biar penjumlahan tidak berbalik jadi negatif kalau qty mendekati batas int
+        long totalQty = (idx >= 0 ? keranjangQty.get(idx) : 0) + (long) qty;
+        if (totalQty > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Qty " + brg.getKode() + " melebihi batas maksimum");
+        }
         if (brg.getStok() < totalQty) {
             throw new IllegalArgumentException("Stok " + brg.getNama() + " tidak cukup, sisa " + brg.getStok());
         }
 
         if (idx >= 0) {
-            keranjangQty.set(idx, totalQty);
+            keranjangQty.set(idx, (int) totalQty);
         } else {
             keranjang.add(brg);
             keranjangQty.add(qty);

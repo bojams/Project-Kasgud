@@ -1,5 +1,7 @@
 // File: src/Main.java
+import gui.DialogLogin;
 import gui.MainFrame;
+import service.AuthService;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -10,7 +12,27 @@ public class Main {
     public static void main(String[] args) {
         pasangLookAndFeel();
         // Swing harus dijalankan di thread khusus graphics, bukan thread main
-        SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+        SwingUtilities.invokeLater(Main::tampilkanLogin);
+    }
+
+    // aplikasi tidak langsung dibuka, login dulu. Kalau keluar dari aplikasi
+    // maka jalankan lagi dari awal supaya user baru bisa masuk dengan akun lain
+    private static void tampilkanLogin() {
+        AuthService auth = AuthService.get();
+
+        DialogLogin login = new DialogLogin(auth);
+        login.setOnBerhasil(() -> {
+            login.dispose();
+            SwingUtilities.invokeLater(() -> bukaAplikasi(auth));
+        });
+        login.setVisible(true);
+    }
+
+    private static void bukaAplikasi(AuthService auth) {
+        new MainFrame(auth, () -> {
+            auth.logout();
+            SwingUtilities.invokeLater(Main::tampilkanLogin);
+        }).setVisible(true);
     }
 
     private static void pasangLookAndFeel() {

@@ -110,6 +110,10 @@ public class GudangService {
         if (jumlah <= 0) {
             throw new IllegalArgumentException("Jumlah harus lebih besar dari 0");
         }
+        // dijumlahkan manual, penjumlahan int bisa berbalik jadi negatif kalau sudah maksimum
+        if (brg.getStok() > Integer.MAX_VALUE - jumlah) {
+            throw new IllegalArgumentException("Stok " + brg.getKode() + " akan melebihi batas maksimum");
+        }
         brg.setStok(brg.getStok() + jumlah);
     }
 

@@ -67,7 +67,7 @@ public class PanelGudang extends JPanel {
     }
 
     private JPanel panelCari() {
-        MainFrame.warnaTombol(btnRefresh, 0x2196F3);
+        Tema.warnaTombol(btnRefresh, 0x2196F3);
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 4));
         panel.add(new JLabel("Cari:"));
         panel.add(txtCari);
@@ -78,8 +78,8 @@ public class PanelGudang extends JPanel {
     private JPanel panelTabel() {
         tblBarang.setRowHeight(24);
         tblBarang.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        MainFrame.urutRupiah(tblBarang, 2);
-        MainFrame.urutAngka(tblBarang, 3);
+        Tema.urutRupiah(tblBarang, 2);
+        Tema.urutAngka(tblBarang, 3);
         tblBarang.getTableHeader().setReorderingAllowed(false);
 
         DefaultTableCellRenderer kanan = new DefaultTableCellRenderer();
@@ -93,10 +93,10 @@ public class PanelGudang extends JPanel {
     }
 
     private JPanel panelForm() {
-        MainFrame.warnaTombol(btnTambah, 0x4CAF50);
-        MainFrame.warnaTombol(btnHapus, 0xF44336);
-        MainFrame.warnaTombol(btnUpdate, 0x2196F3);
-        MainFrame.warnaTombol(btnTambahStok, 0x2196F3);
+        Tema.warnaTombol(btnTambah, 0x4CAF50);
+        Tema.warnaTombol(btnHapus, 0xF44336);
+        Tema.warnaTombol(btnUpdate, 0x2196F3);
+        Tema.warnaTombol(btnTambahStok, 0x2196F3);
 
         setUkuran(txtKode, 90);
         setUkuran(txtNama, 220);
@@ -156,9 +156,10 @@ public class PanelGudang extends JPanel {
 
     public void refreshTabel() {
         List<Barang> list = gudang.getDaftar(txtCari.getText());
-        // pilihan dibersihkan dulu supaya RowSorter tidak komplain indeks baris sudah tidak ada
-        tblBarang.clearSelection();
+        // model dikosongkan dulu baru selection, kalau dibalik RowSorter akan
+        // komplain indeks baris yang dipilih sudah tidak ada
         model.setRowCount(0);
+        tblBarang.clearSelection();
         for (Barang brg : list) {
             model.addRow(new Object[]{brg.getKode(), brg.getNama(), Fmt.angka(brg.getHarga()), brg.getStok()});
         }
